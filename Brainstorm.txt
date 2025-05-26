@@ -1,0 +1,31 @@
+spieler_anzahl : anzahl der spieler
+spieler_namen: dictionary
+def karte ziehen
+	karte gezogen(random)
+	if karte 1feld
+		postion[aktueller_spieler] =+ 1
+	if karte 2feld
+		postion[aktueller_spieler] =+ 2
+	if karte 3feld
+		postion[aktueller_spieler] =+ 3
+
+	if karte karotte
+		3 felder random
+Liste_felder select = [alle felder, random auf 0 und 1 gesetzt]
+If loch = 1
+	Spielstein weg (ins loch gefallen + shot)
+Else loch =0 
+	Spiel geht ganz normal weiter 
+aktueller_spieler + 1
+
+else aktionskarte
+Shot drinken
+
+Button adden!
+Kartenzieh animation (ebenso keine ahnung!)
+
+Animation fürs movement (wie keine ahnung!)
+Spielsteine = alkflaschen 
+
+
+
