@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import random
+from players import Player  
 
 app = Flask(__name__)
 app.secret_key = 'geheim'  # Für Sessiondaten
@@ -18,8 +19,10 @@ def spiel_starten():
     if len(set(spieler_namen)) != len(spieler_namen):
         return "Fehler: Doppelte Spielernamen!"
 
-    session['spieler_namen'] = spieler_namen
-    session['counter'] = [0] * len(spieler_namen)
+    # Spielerobjekte erstellen
+    spieler_liste = [Player(name).to_dict() for name in spieler_namen]
+
+    session["spieler"] = spieler_liste
     session['felder'] = [0] * 22 + [1] * 8
     random.shuffle(session['felder'])
     session['aktueller_spieler'] = 0
@@ -28,42 +31,39 @@ def spiel_starten():
 
 @app.route('/spiel')
 def spiel():
-    spieler_namen = session['spieler_namen']
-    counter = session['counter']
+    spieler_dicts = session['spieler']
+    spieler = [Player.from_dict(p) for p in session['spieler']]
     felder = session['felder']
-    aktueller_spieler = session['aktueller_spieler']
+    aktueller_spieler_idx = session['aktueller_spieler']
 
+    aktueller_spieler = spieler[aktueller_spieler_idx]
     karte = random.randint(1, 5)
     meldung = ""
 
-    if karte == 1:
-        counter[aktueller_spieler] += 1
-        meldung = 'Du hast eine 1 geworfen!'
-    elif karte == 2:
-        counter[aktueller_spieler] += 2
-        meldung = 'Du hast eine 2 geworfen!'
-    elif karte == 3:
-        counter[aktueller_spieler] += 3
-        meldung = 'Du hast eine 3 geworfen!'
+    if karte in [1, 2, 3]:
+        aktueller_spieler.move(karte)
+        meldung = f'Du hast eine {karte} gezogen!'
     elif karte == 4:
         random.shuffle(felder)
-        meldung = 'Du hast eine 4 geworfen!'
+        meldung = 'Du hast eine Karotte gezogen!'
     elif karte == 5:
-        meldung = 'Shoty! Du hast eine 5 geworfen!'
+        meldung = 'Shoty!'
 
     # 🎴 Mapping zur Bilddatei
     gezogene_karte = f"karte_{karte}.png"
 
-    session['counter'] = counter
+    session['spieler'] = [p.to_dict() for p in spieler]
     session['felder'] = felder
-    aktueller_spieler = (aktueller_spieler + 1) % len(spieler_namen)
-    session['aktueller_spieler'] = aktueller_spieler
+    session['aktueller_spieler'] = (aktueller_spieler_idx + 1) % len(spieler)
+
+    spieler_namen = [p.name for p in spieler]
+    counter = [p.position for p in spieler]
 
     return render_template('spiel.html',
                            spieler_namen=spieler_namen,
                            counter=counter,
                            meldung=meldung,
-                           aktueller=spieler_namen[aktueller_spieler],
+                           aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
                            zip=zip)
 
