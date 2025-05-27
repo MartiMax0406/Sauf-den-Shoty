@@ -30,6 +30,7 @@ def spiel_starten():
     runde(spieler_anzahl, aktueller_spieler=0)
 
 def runde(spieler_anzahl, aktueller_spieler):
+    # Karte ziehen
     karte = random.randint(1, 5)
     if karte == 1:
         counter[aktueller_spieler] += 1
@@ -42,10 +43,12 @@ def runde(spieler_anzahl, aktueller_spieler):
         return 'Du hast eine 3 geworfen!'
     elif karte == 4:
         random.shuffle(felder)
-        return 'Du hast eine 4 geworfen!'
+        return 'Du hast eine 4 geworfen!'2
     elif karte == 5:
         print("Shoty!")
         return 'Du hast eine 5 geworfen!'
+    
+    # Wechsle zum nächsten Spieler
     if aktueller_spieler < spieler_anzahl - 1:
         aktueller_spieler += 1
     else:
