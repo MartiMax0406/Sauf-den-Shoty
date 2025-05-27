@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Spiel starten</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
-    <h1>Lotti Karotti – Spiel starten</h1>
-
+    <h1>Sauf den Shoty – Spiel starten</h1>
     {% if spieler_anzahl %}
     <form action="/spiel_starten" method="post">
         {% for i in range(spieler_anzahl) %}

@@ -1,20 +1,114 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <meta charset="UTF-8">
-    <title>Spiel läuft</title>
+    <title>Spiel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+        }
+
+        .karte-container {
+            perspective: 1000px;
+            display: inline-block;
+            margin-top: 50px;
+        }
+
+        .karte {
+            width: 200px;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            cursor: pointer;
+        }
+
+        .flip .karte {
+            transform: rotateY(180deg);
+        }
+
+        .seite {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .vorderseite {
+            transform: rotateY(180deg);
+        }
+
+        .seite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        .naechster-button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .naechster-button:hover {
+            background-color: #005fa3;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ meldung }}</h1>
-    <h2>Spielstände:</h2>
-    <ul>
-        {% for name, punkt in zip(spieler_namen, counter) %}
-            <li>{{ name }}: {{ punkt }} Felder</li>
-        {% endfor %}
-    </ul>
-    <h3>Nächster Spieler: {{ aktueller }}</h3>
-    <form action="/spiel">
-        <button type="submit">Nächste Runde</button>
+    <h1>🎲 Spieler: {{ aktueller }}</h1>
+
+    <div class="karte-container" onclick="flipKarte()">
+        <div class="karte" id="karte">
+            <div class="seite rueckseite">
+                <img src="{{ url_for('static', filename='karten/rueckseite.png') }}" alt="Rückseite">
+            </div>
+            <div class="seite vorderseite">
+                <img src="{{ url_for('static', filename='karten/' + gezogene_karte) }}" alt="Gezogene Karte">
+            </div>
+        </div>
+    </div>
+
+    <div class="info">
+        <p>{{ meldung }}</p>
+        <p>Punkte:</p>
+        <ul>
+            {% for name, punkt in zip(spieler_namen, counter) %}
+                <li><strong>{{ name }}:</strong> {{ punkt }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <form action="{{ url_for('spiel') }}" method="get">
+        <button type="submit" class="naechster-button">🎯 Nächster Spieler</button>
     </form>
+
+    <script>
+        function flipKarte() {
+            const container = document.querySelector('.karte-container');
+            container.classList.add('flip');
+
+            // Karte nach 3 Sekunden automatisch zurückdrehen
+            setTimeout(() => {
+                container.classList.remove('flip');
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
+<!-- This HTML template is used to display the game state in Sauf den Shoty. It includes a card flip animation, player information, and a button to proceed to the next player. -->
