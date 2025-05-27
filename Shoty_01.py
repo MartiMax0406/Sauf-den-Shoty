@@ -43,7 +43,7 @@ def runde(spieler_anzahl, aktueller_spieler):
         return 'Du hast eine 3 geworfen!'
     elif karte == 4:
         random.shuffle(felder)
-        return 'Du hast eine 4 geworfen!'2
+        return 'Du hast eine 4 geworfen!'
     elif karte == 5:
         print("Shoty!")
         return 'Du hast eine 5 geworfen!'
