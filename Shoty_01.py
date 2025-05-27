@@ -13,16 +13,14 @@ def spiel_starten():
         print('Es müssen mindestens 2 Spieler teilnehmen.')
         return
     spieler_namen = {}
-
     for i in range(spieler_anzahl):
-        name = input('Gib den Namen des Spielers ein:')
-        if name in spieler_namen:
+        name = input('Gib den Namen des Spielers ein: ')
+        if name in spieler_namen.values():
             print(f'{name} ist bereits im Spiel.')
-            i =- 1
+            i = i - 1
         else:
             spieler_namen[i] = name
             print(f'{name} wurde zum Spiel hinzugefügt.')
-    
     # Starte das Spiel
     runde(0)
 
