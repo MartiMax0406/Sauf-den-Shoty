@@ -5,14 +5,22 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    spiel_starten()
+    while True:    
+        spiel_starten()
+
 
 def spiel_starten():
-    spieler_anzahl = int(input('Gib die Anzahl der Spieler ein: '))
-    if spieler_anzahl < 2:
-        print('Es müssen mindestens 2 Spieler teilnehmen.')
+    try:
+        spieler_anzahl = int(input('Gib die Anzahl der Spieler ein: '))
+        if spieler_anzahl < 2:
+            print('Es müssen mindestens 2 Spieler teilnehmen.')
+            return
+    except ValueError:
+        print('Ungültige Eingabe. Bitte gib eine Zahl ein.')
         return
+    
     spieler_namen = []
+    # Namen der Spieler eingeben
     for i in range(spieler_anzahl):
         name = input('Gib den Namen des Spielers ein: ')
         if name in spieler_namen:
@@ -21,6 +29,8 @@ def spiel_starten():
         else:
             spieler_namen[i] = name
             print(f'{name} wurde zum Spiel hinzugefügt.')
+
+    
     # Starte das Spiel
     global counter
     global felder
