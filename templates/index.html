@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Spiel starten</title>
+</head>
+<body>
+    <h1>Lotti Karotti – Spiel starten</h1>
+
+    {% if spieler_anzahl %}
+    <form action="/spiel_starten" method="post">
+        {% for i in range(spieler_anzahl) %}
+            <label>Spieler {{ i + 1 }} Name:</label>
+            <input type="text" name="spieler_name" required><br>
+        {% endfor %}
+        <button type="submit">Spiel starten</button>
+    </form>
+    {% else %}
+    <form method="post">
+        <label>Wie viele Spieler?</label>
+        <input type="number" name="spieler_anzahl" min="2" max="10" required>
+        <button type="submit">Weiter</button>
+    </form>
+    {% endif %}
+</body>
+</html>

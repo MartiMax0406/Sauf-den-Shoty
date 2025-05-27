@@ -1,70 +1,66 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for, session
 import random
 
 app = Flask(__name__)
+app.secret_key = 'geheim'  # Für Sessiondaten
 
-@app.route('/')
-def home():
-    while True:    
-        spiel_starten()
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        spieler_anzahl = int(request.form['spieler_anzahl'])
+        return render_template('index.html', spieler_anzahl=spieler_anzahl)
 
+    return render_template('index.html')
 
+@app.route('/spiel_starten', methods=['POST'])
 def spiel_starten():
-    try:
-        spieler_anzahl = int(input('Gib die Anzahl der Spieler ein: '))
-        if spieler_anzahl < 2:
-            print('Es müssen mindestens 2 Spieler teilnehmen.')
-            return
-    except ValueError:
-        print('Ungültige Eingabe. Bitte gib eine Zahl ein.')
-        return
-    
-    spieler_namen = []
-    # Namen der Spieler eingeben
-    for i in range(spieler_anzahl):
-        name = input('Gib den Namen des Spielers ein: ')
-        if name in spieler_namen:
-            print(f'{name} ist bereits im Spiel.')
-            i = i - 1
-        else:
-            spieler_namen[i] = name
-            print(f'{name} wurde zum Spiel hinzugefügt.')
+    spieler_namen = request.form.getlist('spieler_name')
+    if len(set(spieler_namen)) != len(spieler_namen):
+        return "Fehler: Doppelte Spielernamen!"
 
-    
-    # Starte das Spiel
-    global counter
-    global felder
-    counter = [0] * spieler_anzahl 
-    felder = [0] * 22 + [1] * 8
-    random.shuffle(felder)
-    runde(spieler_anzahl, aktueller_spieler=0)
+    session['spieler_namen'] = spieler_namen
+    session['counter'] = [0] * len(spieler_namen)
+    session['felder'] = [0] * 22 + [1] * 8
+    random.shuffle(session['felder'])
+    session['aktueller_spieler'] = 0
 
-def runde(spieler_anzahl, aktueller_spieler):
-    # Karte ziehen
+    return redirect(url_for('spiel'))
+
+@app.route('/spiel')
+def spiel():
+    spieler_namen = session['spieler_namen']
+    counter = session['counter']
+    felder = session['felder']
+    aktueller_spieler = session['aktueller_spieler']
+
     karte = random.randint(1, 5)
+    meldung = ""
+
     if karte == 1:
         counter[aktueller_spieler] += 1
-        return 'Du hast eine 1 geworfen!'
+        meldung = 'Du hast eine 1 geworfen!'
     elif karte == 2:
         counter[aktueller_spieler] += 2
-        return 'Du hast eine 2 geworfen!'
+        meldung = 'Du hast eine 2 geworfen!'
     elif karte == 3:
         counter[aktueller_spieler] += 3
-        return 'Du hast eine 3 geworfen!'
+        meldung = 'Du hast eine 3 geworfen!'
     elif karte == 4:
         random.shuffle(felder)
-        return 'Du hast eine 4 geworfen!'
+        meldung = 'Du hast eine 4 geworfen!'
     elif karte == 5:
-        print("Shoty!")
-        return 'Du hast eine 5 geworfen!'
-    
-    # Wechsle zum nächsten Spieler
-    if aktueller_spieler < spieler_anzahl - 1:
-        aktueller_spieler += 1
-    else:
-        aktueller_spieler = 0
+        meldung = 'Shoty! Du hast eine 5 geworfen!'
+
+    session['counter'] = counter
+    session['felder'] = felder
+    aktueller_spieler = (aktueller_spieler + 1) % len(spieler_namen)
+    session['aktueller_spieler'] = aktueller_spieler
+
+    return render_template('spiel.html',
+                           spieler_namen=spieler_namen,
+                           counter=counter,
+                           meldung=meldung,
+                           aktueller=spieler_namen[aktueller_spieler])
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-    
