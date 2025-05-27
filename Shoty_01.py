@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return 'Hallo, willkommen beim Flask Server!'
+    spiel_starten()
 
 def spiel_starten():
     spieler_anzahl = int(input('Gib die Anzahl der Spieler ein: '))
@@ -22,7 +22,9 @@ def spiel_starten():
         else:
             spieler_namen[i] = name
             print(f'{name} wurde zum Spiel hinzugefügt.')
-
+    
+    # Starte das Spiel
+    runde(0)
 
 def runde(aktueller_spieler):
     karte = random.randint(1, 5)
@@ -36,6 +38,8 @@ def runde(aktueller_spieler):
         return 'Du hast eine 4 geworfen!'
     elif karte == 5:
         return 'Du hast eine 5 geworfen!'
+    
+
 if __name__ == '__main__':
     app.run(debug=True)
 
