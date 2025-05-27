@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Spiel läuft</title>
+</head>
+<body>
+    <h1>{{ meldung }}</h1>
+    <h2>Spielstände:</h2>
+    <ul>
+        {% for name, punkt in zip(spieler_namen, counter) %}
+            <li>{{ name }}: {{ punkt }} Felder</li>
+        {% endfor %}
+    </ul>
+    <h3>Nächster Spieler: {{ aktueller }}</h3>
+    <form action="/spiel">
+        <button type="submit">Nächste Runde</button>
+    </form>
+</body>
+</html>
