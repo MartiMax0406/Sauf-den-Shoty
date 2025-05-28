@@ -39,6 +39,7 @@ def spiel():
     aktueller_spieler = spieler[aktueller_spieler_idx]
     karte = random.randint(1, 5)
     meldung = ""
+    karotten_feld = ""
 
     if karte in [1, 2, 3]:
         aktueller_spieler.move(karte)
@@ -65,6 +66,7 @@ def spiel():
                            spieler_namen=spieler_namen,
                            counter=counter,
                            meldung=meldung,
+                           karotten_feld=karotten_feld,
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
                            zip=zip)
@@ -72,11 +74,12 @@ def spiel():
 
 def check_position(position):
     felder = session['felder']
-    if position == 22:
+    if position == len(felder):
         return "Du hast das Spiel gewonnen!"
-    for i in felder:
-        if i == 1 and position == felder.index(i):
-            return "Du bist auf einem Feld mit einer Karotte gelandet!"
+    if position < len(felder) and felder[position] == 1:
+        return "Du bist auf einem Feld mit einer Karotte gelandet!"
+    else:  
+        return ""
     
 
 if __name__ == '__main__':
