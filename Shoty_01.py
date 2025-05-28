@@ -43,9 +43,11 @@ def spiel():
     if karte in [1, 2, 3]:
         aktueller_spieler.move(karte)
         meldung = f'Du hast eine {karte} gezogen!'
+        karotten_feld = check_position(aktueller_spieler.position)
     elif karte == 4:
         random.shuffle(felder)
         meldung = 'Du hast eine Karotte gezogen!'
+        karotten_feld = check_position(aktueller_spieler.position)
     elif karte == 5:
         meldung = 'Shoty!'
 
@@ -66,6 +68,16 @@ def spiel():
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
                            zip=zip)
+
+
+def check_position(position):
+    felder = session['felder']
+    if position == 22:
+        return "Du hast das Spiel gewonnen!"
+    for i in felder:
+        if i == 1 and position == felder.index(i):
+            return "Du bist auf einem Feld mit einer Karotte gelandet!"
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
