@@ -78,8 +78,11 @@ def check_position(position):
         return "Du hast das Spiel gewonnen!"
     if position < len(felder) and felder[position] == 1:
         return "Du bist auf einem Feld mit einer Karotte gelandet!"
+<<<<<<< HEAD
     else:  
         return ""
+=======
+>>>>>>> 457b1b77d5efd9b7152588dc32990853476a9289
     
 
 if __name__ == '__main__':
