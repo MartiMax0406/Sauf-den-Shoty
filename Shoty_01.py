@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import random
+import json
 from players import Player  
 
 app = Flask(__name__)
@@ -69,7 +70,8 @@ def spiel():
                            karotten_feld=karotten_feld,
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
-                           zip=zip)
+                           zip=zip,
+                           spieler_json=json.dumps([p.to_dict() for p in spieler]))  # <--- HINZUGEFÜGT
 
 
 def check_position(position):

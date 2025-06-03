@@ -98,6 +98,12 @@
         <button type="submit" class="naechster-button">🎯 Nächster Spieler</button>
     </form>
 
+    <h1>Sauf den Shoty</h1>
+    <div id="game-board"
+         data-spieler='{{ spieler_json|safe }}'
+         data-aktueller="{{ aktueller }}"></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
     <script>
         function flipKarte() {
             const container = document.querySelector('.karte-container');

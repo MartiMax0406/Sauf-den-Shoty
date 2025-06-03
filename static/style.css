@@ -50,3 +50,84 @@ ul {
 li {
     margin: 10px 0;
 }
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 60px);
+    grid-template-rows: repeat(5, 60px);
+    gap: 6px;
+    margin: 30px auto 0 auto;
+    justify-content: center;
+}
+
+#game-board div {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f7b267 60%, #f4845f 100%);
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: transform 0.1s;
+}
+
+#game-board div:hover {
+    transform: scale(1.08);
+    background: linear-gradient(135deg, #f4845f 60%, #f7b267 100%);
+    cursor: pointer;
+}
+
+.shoty-cell {
+    width: 60px;
+    height: 60px;
+    background: #fffbe6;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 22px;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin: 0;
+    position: relative;
+    flex-direction: column;
+}
+
+.shoty-cell .spieler {
+    background: #4CAF50;
+    color: #fff;
+    border-radius: 50%;
+    padding: 4px 8px;
+    margin: 1px;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.shoty-cell .spieler-aktuell {
+    background: #ff8800;
+    color: #fff;
+    border-radius: 50%;
+    padding: 4px 8px;
+    margin: 1px;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    box-shadow: 0 0 8px #ff8800;
+}
+
+.shoty-cell .feldnummer {
+    color: #bbb;
+    font-size: 14px;
+}
+
+.shoty-cell.active-cell {
+    border: 3px solid #ff8800;
+    background: #ffe066;
+}
