@@ -9,28 +9,40 @@ window.onload = () => {
 
     // Snake-Board Parameter
     const FELDER = 31; // 0 (Start) bis 30
-    const FELDER_PRO_REIHE = 8; // z.B. 8 Felder pro Zeile
+    const FELDER_PRO_REIHE = 8;
     const REIHEN = Math.ceil(FELDER / FELDER_PRO_REIHE);
-    const CIRCLE_RADIUS = 22;
-    const ABSTAND_X = 90;
-    const ABSTAND_Y = 110; // mehr Abstand zwischen Zeilen
-    const PADDING = 70;
+    const CIRCLE_RADIUS = 28;
+    const ABSTAND_X = 100;
+    const ABSTAND_Y = 120;
+    const PADDING_X = 80;
+    const PADDING_Y = 80;
 
     // SVG Größe berechnen
-    const SVG_WIDTH = PADDING * 2 + ABSTAND_X * (FELDER_PRO_REIHE - 1);
-    const SVG_HEIGHT = PADDING * 2 + ABSTAND_Y * (REIHEN - 1);
+    const SVG_WIDTH = PADDING_X * 2 + ABSTAND_X * (FELDER_PRO_REIHE - 1);
+    const SVG_HEIGHT = PADDING_Y * 2 + ABSTAND_Y * (REIHEN - 1);
 
-    // Snake-Positionen berechnen
+    // Motive für die Felder (ohne Kappe, mit Alkohol)
+    const MOTIVE = ["🥕", "🌾", "🥬", "🌼", "🍺", "🍻", "🍹", "🍷"]; // Karotte, Stroh, Salat, Löwenzahn, Bier, Bierkrug, Cocktail, Wein
+    // 🐰 = Start, 🏆 = Ziel
+
+    // Dummy Karottenfelder (z.B. alle 4 Felder ab 3, außer Start/Ziel)
+    const karottenFelder = [];
+    for (let i = 3; i < 30; i += 4) karottenFelder.push(i);
+
+    // Symmetrische Snake-Positionen berechnen (wirklich symmetrisch, auch letzte Zeile!)
     function getSnakePos(i) {
         const row = Math.floor(i / FELDER_PRO_REIHE);
-        let col = i % FELDER_PRO_REIHE;
-        // Jede zweite Reihe umdrehen (Schlangenlinie)
-        if (row % 2 === 1) {
-            col = FELDER_PRO_REIHE - 1 - col;
+        let felderInReihe = FELDER_PRO_REIHE;
+        if (row === REIHEN - 1 && FELDER % FELDER_PRO_REIHE !== 0) {
+            felderInReihe = FELDER % FELDER_PRO_REIHE;
         }
+        let idxInRow = i - row * FELDER_PRO_REIHE;
+        let col = row % 2 === 0 ? idxInRow : (felderInReihe - 1 - idxInRow);
+        const zeilenBreite = ABSTAND_X * (felderInReihe - 1);
+        const startX = (SVG_WIDTH - zeilenBreite) / 2;
         return {
-            x: PADDING + col * ABSTAND_X,
-            y: PADDING + row * ABSTAND_Y
+            x: startX + col * ABSTAND_X,
+            y: PADDING_Y + row * ABSTAND_Y
         };
     }
 
@@ -44,11 +56,11 @@ window.onload = () => {
     svg.style.margin = "30px auto";
     svg.style.display = "block";
 
-    // Zeilen-Hintergrund für bessere Erkennbarkeit
+    // Zeilen-Hintergrund für bessere Erkennbarkeit (Abtrennungen immer gleich groß)
     for (let row = 0; row < REIHEN; row++) {
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("x", 0);
-        rect.setAttribute("y", PADDING + row * ABSTAND_Y - ABSTAND_Y / 2 + CIRCLE_RADIUS);
+        rect.setAttribute("y", PADDING_Y + row * ABSTAND_Y - ABSTAND_Y / 2 + CIRCLE_RADIUS);
         rect.setAttribute("width", SVG_WIDTH);
         rect.setAttribute("height", ABSTAND_Y);
         rect.setAttribute("fill", row % 2 === 0 ? "#fffbe6" : "#ffeccc");
@@ -72,21 +84,22 @@ window.onload = () => {
 
     // Bögen an den Zeilenenden zeichnen
     for (let row = 0; row < REIHEN - 1; row++) {
-        // Letztes Feld der aktuellen Zeile
+        let felderInReihe = FELDER_PRO_REIHE;
+        let felderInNext = FELDER_PRO_REIHE;
+        if (row === REIHEN - 2 && FELDER % FELDER_PRO_REIHE !== 0) {
+            felderInNext = FELDER % FELDER_PRO_REIHE;
+        }
         let lastIdx = (row + 1) * FELDER_PRO_REIHE - 1;
         if (lastIdx >= FELDER) lastIdx = FELDER - 1;
-        // Erstes Feld der nächsten Zeile
         let nextIdx = (row + 1) * FELDER_PRO_REIHE;
         if (nextIdx >= FELDER) continue;
 
         const p1 = getSnakePos(lastIdx);
         const p2 = getSnakePos(nextIdx);
 
-        // Bogenrichtung: links->rechts oder rechts->links
         const sweep = (row % 2 === 0) ? 1 : 0;
         const arcRadius = ABSTAND_X / 1.5;
 
-        // SVG-Path für den Bogen
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d",
             `M${p1.x},${p1.y} A${arcRadius},${arcRadius} 0 0,${sweep} ${p2.x},${p2.y}`
@@ -101,8 +114,6 @@ window.onload = () => {
     // Felder zeichnen
     for (let i = 0; i < FELDER; i++) {
         const {x, y} = getSnakePos(i);
-
-        // Spieler auf diesem Feld
         const spielerHier = spieler.filter(s => s.position === i);
 
         // Kreis
@@ -114,38 +125,53 @@ window.onload = () => {
 
         // Feldfarben und Markierungen
         if (i === 0) {
-            // Startfeld
             circle.setAttribute("stroke", "#0077cc");
             circle.setAttribute("stroke-width", "5");
             circle.setAttribute("fill", "#e0f7fa");
         } else if (i === 30) {
-            // Gewinnerfeld
             circle.setAttribute("stroke", "#FFD700");
             circle.setAttribute("stroke-width", "7");
             circle.setAttribute("fill", "url(#gold-gradient)");
         } else if (spielerHier.some(s => s.name === aktueller)) {
-            // Aktueller Spieler
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "6");
             circle.setAttribute("fill", "#ffe066");
+        } else if (karottenFelder.includes(i)) {
+            circle.setAttribute("stroke", "#ff8800");
+            circle.setAttribute("stroke-width", "4");
+            circle.setAttribute("fill", "#fff7d6");
         } else {
-            // Normales Feld
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "3");
             circle.setAttribute("fill", "#fff");
         }
         svg.appendChild(circle);
 
-        // Feldnummer
+        // Motiv-Emoji
+        let emoji = "";
+        if (i === 0) emoji = "🐰";
+        else if (i === 30) emoji = "🏆";
+        else if (karottenFelder.includes(i)) emoji = "🥕";
+        else emoji = MOTIVE[(i + 1) % MOTIVE.length];
+
+        const emojiText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        emojiText.setAttribute("x", x);
+        emojiText.setAttribute("y", y + 8);
+        emojiText.setAttribute("text-anchor", "middle");
+        emojiText.setAttribute("font-size", "32");
+        emojiText.setAttribute("font-family", "Segoe UI Emoji, Arial, sans-serif");
+        emojiText.textContent = emoji;
+        svg.appendChild(emojiText);
+
+        // Feldnummer (klein, unter das Emoji)
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", x);
-        text.setAttribute("y", y + 6);
+        text.setAttribute("y", y + CIRCLE_RADIUS - 8);
         text.setAttribute("text-anchor", "middle");
-        text.setAttribute("font-size", "18");
+        text.setAttribute("font-size", "13");
         text.setAttribute("font-family", "Arial, sans-serif");
-        text.setAttribute("fill", i === 30 ? "#bfa14a" : "#bfa14a");
-        text.setAttribute("font-weight", i === 30 ? "bold" : "normal");
-        text.textContent = i === 0 ? "START" : (i === 30 ? "🏆 30" : i);
+        text.setAttribute("fill", "#bfa14a");
+        text.textContent = i === 0 ? "START" : (i === 30 ? "ZIEL" : i);
         svg.appendChild(text);
 
         // Spielernamen
