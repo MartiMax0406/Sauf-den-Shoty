@@ -24,7 +24,7 @@ def spiel_starten():
     spieler_liste = [Player(name).to_dict() for name in spieler_namen]
 
     session["spieler"] = spieler_liste
-    session['felder'] = [0] * 22 + [1] * 8
+    session['felder'] = [0] * 25 + [1] * 5
     random.shuffle(session['felder'])
     session['aktueller_spieler'] = 0
 
@@ -32,19 +32,20 @@ def spiel_starten():
 
 @app.route('/spiel')
 def spiel():
-    spieler_dicts = session['spieler']
     spieler = [Player.from_dict(p) for p in session['spieler']]
     felder = session['felder']
     aktueller_spieler_idx = session['aktueller_spieler']
 
     aktueller_spieler = spieler[aktueller_spieler_idx]
     karte = random.randint(1, 5)
-    meldung = ""
     karotten_feld = ""
 
     if karte in [1, 2, 3]:
         aktueller_spieler.move(karte)
         karotten_feld = check_position(aktueller_spieler.position)
+        if karotten_feld == "Du bist in ein Loch geflogen! Sauf!":
+            aktueller_spieler.position = 0
+
     elif karte == 4:
         random.shuffle(felder)
         karotten_feld = check_position(aktueller_spieler.position)
@@ -66,15 +67,15 @@ def spiel():
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
                            zip=zip,
-                           spieler_json=json.dumps([p.to_dict() for p in spieler]))  # <--- HINZUGEFÜGT
+                           spieler_json=json.dumps([p.to_dict() for p in spieler]))
 
 
 def check_position(position):
     felder = session['felder']
-    if position == len(felder):
+    if position >= len(felder):
         return "Du hast das Spiel gewonnen!"
     if position < len(felder) and felder[position] == 1:
-        return "Du bist auf einem Feld mit einer Karotte gelandet!"
+        return "Du bist in ein Loch geflogen! Sauf!"
     else:  
         return ""
     
