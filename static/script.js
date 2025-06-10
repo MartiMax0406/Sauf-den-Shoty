@@ -56,7 +56,7 @@ window.onload = () => {
         svg.appendChild(rect);
     }
 
-    // Schatten-Filter für Kreise
+    // Schatten-Filter für Kreise und Gold-Gradient
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     defs.innerHTML = `
         <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
@@ -69,6 +69,34 @@ window.onload = () => {
         </radialGradient>
     `;
     svg.appendChild(defs);
+
+    // Bögen an den Zeilenenden zeichnen
+    for (let row = 0; row < REIHEN - 1; row++) {
+        // Letztes Feld der aktuellen Zeile
+        let lastIdx = (row + 1) * FELDER_PRO_REIHE - 1;
+        if (lastIdx >= FELDER) lastIdx = FELDER - 1;
+        // Erstes Feld der nächsten Zeile
+        let nextIdx = (row + 1) * FELDER_PRO_REIHE;
+        if (nextIdx >= FELDER) continue;
+
+        const p1 = getSnakePos(lastIdx);
+        const p2 = getSnakePos(nextIdx);
+
+        // Bogenrichtung: links->rechts oder rechts->links
+        const sweep = (row % 2 === 0) ? 1 : 0;
+        const arcRadius = ABSTAND_X / 1.5;
+
+        // SVG-Path für den Bogen
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d",
+            `M${p1.x},${p1.y} A${arcRadius},${arcRadius} 0 0,${sweep} ${p2.x},${p2.y}`
+        );
+        path.setAttribute("stroke", "#ff8800");
+        path.setAttribute("stroke-width", "5");
+        path.setAttribute("fill", "none");
+        path.setAttribute("opacity", "0.7");
+        svg.appendChild(path);
+    }
 
     // Felder zeichnen
     for (let i = 0; i < FELDER; i++) {
