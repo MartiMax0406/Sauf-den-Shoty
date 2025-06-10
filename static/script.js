@@ -23,8 +23,8 @@ window.onload = () => {
                     return `<span class="spieler">${s.name}</span>`;
                 }
             }).join(", ");
-            // Feldnummer und Spielernamen nebeneinander
-            cell.innerHTML = `<span class="feldnummer">${i + 1}:</span> ${spielerText}`;
+            // Feldnummer oben, Spielernamen darunter
+            cell.innerHTML = `<span class="feldnummer">${i + 1}</span><div>${spielerText}</div>`;
         } else {
             cell.innerHTML = `<span class="feldnummer">${i + 1}</span>`;
         }

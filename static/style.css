@@ -55,9 +55,14 @@ li {
     display: grid;
     grid-template-columns: repeat(6, 60px);
     grid-template-rows: repeat(5, 60px);
-    gap: 6px;
+    gap: 10px;
     margin: 30px auto 0 auto;
     justify-content: center;
+    width: 400px;
+    background: #fffbe6;
+    border-radius: 30px;
+    box-shadow: 0 4px 24px rgba(255, 136, 0, 0.10);
+    padding: 20px 0;
 }
 
 #game-board div {
@@ -85,19 +90,27 @@ li {
 .shoty-cell {
     width: 60px;
     height: 60px;
-    background: #fffbe6;
-    border: 2px solid #4CAF50;
-    border-radius: 10px;
+    background: radial-gradient(circle at 60% 40%, #ffe066 60%, #ff8800 100%);
+    border: 3px solid #ff8800;
+    border-radius: 50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 22px;
     color: #333;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 10px rgba(255,136,0,0.10);
     margin: 0;
     position: relative;
-    flex-direction: column;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.shoty-cell:hover {
+    transform: scale(1.10);
+    box-shadow: 0 4px 18px #ff8800aa;
+    cursor: pointer;
+    background: radial-gradient(circle at 60% 40%, #ff8800 60%, #ffe066 100%);
 }
 
 .shoty-cell .spieler {
@@ -106,28 +119,32 @@ li {
     border-radius: 50%;
     padding: 4px 8px;
     margin: 1px;
-    font-size: 18px;
+    font-size: 16px;
     display: inline-block;
+    box-shadow: 0 0 4px #4CAF50;
 }
 
 .shoty-cell .spieler-aktuell {
     background: #ff8800;
     color: #fff;
     border-radius: 50%;
-    padding: 4px 8px;
+    padding: 4px 10px;
     margin: 1px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     display: inline-block;
-    box-shadow: 0 0 8px #ff8800;
+    box-shadow: 0 0 10px #ff8800;
 }
 
 .shoty-cell .feldnummer {
-    color: #bbb;
-    font-size: 14px;
+    color: #bfa14a;
+    font-size: 13px;
+    font-weight: normal;
+    margin-bottom: 2px;
 }
 
 .shoty-cell.active-cell {
-    border: 3px solid #ff8800;
-    background: #ffe066;
+    border: 4px solid #4CAF50;
+    background: radial-gradient(circle at 60% 40%, #ffe066 60%, #4CAF50 100%);
+    box-shadow: 0 0 18px #4CAF50;
 }
