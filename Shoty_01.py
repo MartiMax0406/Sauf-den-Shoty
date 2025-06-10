@@ -44,14 +44,10 @@ def spiel():
 
     if karte in [1, 2, 3]:
         aktueller_spieler.move(karte)
-        meldung = f'Du hast eine {karte} gezogen!'
         karotten_feld = check_position(aktueller_spieler.position)
     elif karte == 4:
         random.shuffle(felder)
-        meldung = 'Du hast eine Karotte gezogen!'
         karotten_feld = check_position(aktueller_spieler.position)
-    elif karte == 5:
-        meldung = 'Shoty!'
 
     # 🎴 Mapping zur Bilddatei
     gezogene_karte = f"karte_{karte}.png"
@@ -66,7 +62,6 @@ def spiel():
     return render_template('spiel.html',
                            spieler_namen=spieler_namen,
                            counter=counter,
-                           meldung=meldung,
                            karotten_feld=karotten_feld,
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
