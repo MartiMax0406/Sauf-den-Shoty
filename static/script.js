@@ -11,10 +11,10 @@ window.onload = () => {
     const FELDER = 31; // 0 (Start) bis 30
     const FELDER_PRO_REIHE = 8; // z.B. 8 Felder pro Zeile
     const REIHEN = Math.ceil(FELDER / FELDER_PRO_REIHE);
-    const CIRCLE_RADIUS = 28;
-    const ABSTAND_X = 80;
-    const ABSTAND_Y = 90;
-    const PADDING = 60;
+    const CIRCLE_RADIUS = 22;
+    const ABSTAND_X = 90;
+    const ABSTAND_Y = 110; // mehr Abstand zwischen Zeilen
+    const PADDING = 70;
 
     // SVG Größe berechnen
     const SVG_WIDTH = PADDING * 2 + ABSTAND_X * (FELDER_PRO_REIHE - 1);
@@ -44,6 +44,32 @@ window.onload = () => {
     svg.style.margin = "30px auto";
     svg.style.display = "block";
 
+    // Zeilen-Hintergrund für bessere Erkennbarkeit
+    for (let row = 0; row < REIHEN; row++) {
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", 0);
+        rect.setAttribute("y", PADDING + row * ABSTAND_Y - ABSTAND_Y / 2 + CIRCLE_RADIUS);
+        rect.setAttribute("width", SVG_WIDTH);
+        rect.setAttribute("height", ABSTAND_Y);
+        rect.setAttribute("fill", row % 2 === 0 ? "#fffbe6" : "#ffeccc");
+        rect.setAttribute("opacity", "0.5");
+        svg.appendChild(rect);
+    }
+
+    // Schatten-Filter für Kreise
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    defs.innerHTML = `
+        <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#ff8800" flood-opacity="0.25"/>
+        </filter>
+        <radialGradient id="gold-gradient">
+            <stop offset="0%" stop-color="#fffbe6"/>
+            <stop offset="60%" stop-color="#ffe066"/>
+            <stop offset="100%" stop-color="#FFD700"/>
+        </radialGradient>
+    `;
+    svg.appendChild(defs);
+
     // Felder zeichnen
     for (let i = 0; i < FELDER; i++) {
         const {x, y} = getSnakePos(i);
@@ -56,6 +82,7 @@ window.onload = () => {
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
         circle.setAttribute("r", CIRCLE_RADIUS);
+        circle.setAttribute("filter", "url(#shadow)");
 
         // Feldfarben und Markierungen
         if (i === 0) {
@@ -80,25 +107,6 @@ window.onload = () => {
             circle.setAttribute("fill", "#fff");
         }
         svg.appendChild(circle);
-
-        // Gold-Gradient für Gewinnerfeld
-        if (i === 30) {
-            const defs = svg.querySelector("defs") || (() => {
-                const d = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-                svg.insertBefore(d, svg.firstChild);
-                return d;
-            })();
-            if (!svg.querySelector("#gold-gradient")) {
-                const grad = document.createElementNS("http://www.w3.org/2000/svg", "radialGradient");
-                grad.setAttribute("id", "gold-gradient");
-                grad.innerHTML = `
-                    <stop offset="0%" stop-color="#fffbe6"/>
-                    <stop offset="60%" stop-color="#ffe066"/>
-                    <stop offset="100%" stop-color="#FFD700"/>
-                `;
-                defs.appendChild(grad);
-            }
-        }
 
         // Feldnummer
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
