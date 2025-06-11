@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Spiel</title>
+    <title>Sauf den Shoty!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,11 +55,13 @@
 
         .naechster-button {
             margin-top: 30px;
+            margin-right: 20px;
             padding: 10px 20px;
             font-size: 16px;
             background-color: #0077cc;
             color: white;
             border: none;
+            float: right;
             border-radius: 8px;
             cursor: pointer;
         }
@@ -68,7 +70,6 @@
             background-color: #005fa3;
         }
 
-        /* Neu hinzugefügt für das SVG-Board */
         #svg-board {
             margin-top: 50px;
             width: 100%;
@@ -110,12 +111,6 @@
 
     <div class="info">
         <p>{{ karotten_feld }}</p>
-        <p>Punkte:</p>
-        <ul>
-            {% for name, punkt in zip(spieler_namen, counter) %}
-                <li><strong>{{ name }}:</strong> {{ punkt }}</li>
-            {% endfor %}
-        </ul>
     </div>
 
     <form action="{{ url_for('spiel') }}" method="get">
