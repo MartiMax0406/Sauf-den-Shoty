@@ -19,6 +19,6 @@ Gebaut mit **Python Flask**, HTML/CSS und JavaScript für interaktive Animatione
 - Mehrspieler-Modus (lokal)
 - Flip-Animation der Karten (erst klicken, dann Effekt!)
 - Zufällige Spielfeldstruktur (wird bei Karte 4 neu gemischt)
-- Karte bleibt offen, bis der nächste Spieler klickt
+- Karte bleibt offen; zum Weiterspielen einfach auf die Karte klicken (kein Extra-Button nötig)
 - Kein Spoiler: Effekt kommt **erst nach Flip**
 - Spielerwechsel automatisch
