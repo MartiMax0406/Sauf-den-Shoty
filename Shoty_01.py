@@ -96,6 +96,8 @@ def apply_card():
             'karotten_feld': karotten_feld
         })
 
+
+
     return redirect(url_for('spiel'))
 
 
