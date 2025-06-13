@@ -129,6 +129,7 @@
             </div>
             <div id="kartenstapel" style="position:relative; width:60px; height:90px; margin:40px auto 0 auto;">
                 <img src="{{ url_for('static', filename='karten/rueckseite.png') }}" alt="Stapel" style="width:60px; height:90px; border-radius:8px; box-shadow:0 2px 8px #aaa;">
+                <img id="letzte-karte-stapel" src="" alt="" style="display:none; position:absolute; left:0; top:0; width:60px; height:90px; border-radius:8px; box-shadow:0 2px 8px #aaa;">
             </div>
             <div class="info">
                 <p>{{ karotten_feld }}</p>
@@ -147,6 +148,10 @@
             const container = document.querySelector('.karte-container');
             const karte = document.getElementById('karte');
             const stapel = document.getElementById('kartenstapel');
+            const letzteKarteStapel = document.getElementById('letzte-karte-stapel');
+            // Die gezogene Karte (Vorderseite) als Bildquelle holen
+            const gezogeneKarteSrc = document.querySelector('.vorderseite img').src;
+
             container.classList.add('flip');
 
             // Nach 3 Sekunden: animiere Karte zum Stapel
@@ -176,8 +181,10 @@
                     clone.style.opacity = "0.2";
                 }, 30);
 
-                // Nach Animation entfernen
+                // Nach Animation: Stapel-Bild sichtbar machen und Bild setzen
                 setTimeout(() => {
+                    letzteKarteStapel.src = gezogeneKarteSrc;
+                    letzteKarteStapel.style.display = "block";
                     clone.remove();
                 }, 900);
             }, 3000);
