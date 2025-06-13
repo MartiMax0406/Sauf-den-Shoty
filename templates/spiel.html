@@ -134,9 +134,6 @@
             <div class="info">
                 <p>{{ karotten_feld }}</p>
             </div>
-            <form action="{{ url_for('spiel') }}" method="get">
-                <button type="submit" class="naechster-button">🎯 Nächster Spieler</button>
-            </form>
         </div>
         <div id="svg-board"
              data-spieler='{{ spieler_json|safe }}'
@@ -149,45 +146,51 @@
             const karte = document.getElementById('karte');
             const stapel = document.getElementById('kartenstapel');
             const letzteKarteStapel = document.getElementById('letzte-karte-stapel');
-            // Die gezogene Karte (Vorderseite) als Bildquelle holen
             const gezogeneKarteSrc = document.querySelector('.vorderseite img').src;
+
+            // Doppelklick verhindern
+            container.onclick = null;
 
             container.classList.add('flip');
 
-            // Nach 3 Sekunden: animiere Karte zum Stapel
+            // Nach dem Flip per AJAX Zug ausführen
             setTimeout(() => {
-                // Positionen berechnen
-                const karteRect = karte.getBoundingClientRect();
-                const stapelRect = stapel.getBoundingClientRect();
-                const dx = stapelRect.left + stapelRect.width/2 - (karteRect.left + karteRect.width/2);
-                const dy = stapelRect.top + stapelRect.height/2 - (karteRect.top + karteRect.height/2);
+                fetch("{{ url_for('apply_card') }}?ajax=1")
+                    .then(r => r.json())
+                    .then(data => {
+                        document.querySelector('.info p').textContent = data.karotten_feld;
+                        renderBoard(data.spieler, data.aktueller);
 
-                // Klone die Karte für die Animation
-                const clone = karte.cloneNode(true);
-                clone.style.position = "fixed";
-                clone.style.left = karteRect.left + "px";
-                clone.style.top = karteRect.top + "px";
-                clone.style.margin = "0";
-                clone.style.zIndex = 1000;
-                clone.style.transition = "transform 0.8s cubic-bezier(.4,2,.6,1), opacity 0.8s";
-                document.body.appendChild(clone);
+                        // Positionen berechnen
+                        const karteRect = karte.getBoundingClientRect();
+                        const stapelRect = stapel.getBoundingClientRect();
+                        const dx = stapelRect.left + stapelRect.width/2 - (karteRect.left + karteRect.width/2);
+                        const dy = stapelRect.top + stapelRect.height/2 - (karteRect.top + karteRect.height/2);
 
-                // Karte zurückdrehen (Original)
-                container.classList.remove('flip');
+                        const clone = karte.cloneNode(true);
+                        clone.style.position = "fixed";
+                        clone.style.left = karteRect.left + "px";
+                        clone.style.top = karteRect.top + "px";
+                        clone.style.margin = "0";
+                        clone.style.zIndex = 1000;
+                        clone.style.transition = "transform 0.8s cubic-bezier(.4,2,.6,1), opacity 0.8s";
+                        document.body.appendChild(clone);
 
-                // Nach kurzem Timeout animieren
-                setTimeout(() => {
-                    clone.style.transform = `translate(${dx}px,${dy}px) scale(0.3) rotate(10deg)`;
-                    clone.style.opacity = "0.2";
-                }, 30);
+                        container.classList.remove('flip');
 
-                // Nach Animation: Stapel-Bild sichtbar machen und Bild setzen
-                setTimeout(() => {
-                    letzteKarteStapel.src = gezogeneKarteSrc;
-                    letzteKarteStapel.style.display = "block";
-                    clone.remove();
-                }, 900);
-            }, 3000);
+                        setTimeout(() => {
+                            clone.style.transform = `translate(${dx}px,${dy}px) scale(0.3) rotate(10deg)`;
+                            clone.style.opacity = "0.2";
+                        }, 30);
+
+                        setTimeout(() => {
+                            letzteKarteStapel.src = gezogeneKarteSrc;
+                            letzteKarteStapel.style.display = "block";
+                            clone.remove();
+                            window.location.href = "{{ url_for('spiel') }}";
+                        }, 900);
+                    });
+            }, 800);
         }
     </script>
 </body>

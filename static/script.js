@@ -1,11 +1,6 @@
-window.onload = () => {
+function renderBoard(spieler, aktueller) {
     const board = document.getElementById("svg-board");
     board.innerHTML = "";
-
-    // Spieler-Infos aus Data-Attribut holen
-    const spielerData = board.getAttribute("data-spieler");
-    const spieler = spielerData ? JSON.parse(spielerData) : [];
-    const aktueller = board.getAttribute("data-aktueller");
 
     // Snake-Board Parameter
     const FELDER = 31; // 0 (Start) bis 30
@@ -194,4 +189,12 @@ window.onload = () => {
     }
 
     board.appendChild(svg);
+};
+
+window.onload = () => {
+    const board = document.getElementById("svg-board");
+    const spielerData = board.getAttribute("data-spieler");
+    const spieler = spielerData ? JSON.parse(spielerData) : [];
+    const aktueller = board.getAttribute("data-aktueller");
+    renderBoard(spieler, aktueller);
 };
