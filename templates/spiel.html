@@ -183,7 +183,9 @@
                     letzteKarteStapel.src = gezogeneKarteSrc;
                     letzteKarteStapel.style.display = "block";
                     clone.remove();
+
                     window.location.href = "{{ url_for('apply_card') }}";
+                    window.location.href = "{{ url_for('spiel') }}";
                 }, 900);
             }, 3000);
         }

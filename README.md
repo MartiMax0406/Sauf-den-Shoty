@@ -20,5 +20,7 @@ Gebaut mit **Python Flask**, HTML/CSS und JavaScript für interaktive Animatione
 - Flip-Animation der Karten (erst klicken, dann Effekt!)
 - Zufällige Spielfeldstruktur (wird bei Karte 4 neu gemischt)
 - Karte bleibt offen; zum Weiterspielen einfach auf die Karte klicken (kein Extra-Button nötig)
+
 - Spielfeld-Update kommt **erst nach dem Flip**
+- Kein Spoiler: Effekt kommt **erst nach Flip**
 - Spielerwechsel automatisch
