@@ -10,10 +10,27 @@
             background: #f0f0f0;
         }
 
+        .spielbrett-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .kartenbereich {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 240px;
+        }
+
         .karte-container {
             perspective: 1000px;
             display: inline-block;
-            margin-top: 50px;
+            margin-top: 0;
         }
 
         .karte {
@@ -51,17 +68,16 @@
         .info {
             margin-top: 20px;
             font-size: 20px;
+            min-height: 28px;
         }
 
         .naechster-button {
             margin-top: 30px;
-            margin-right: 20px;
             padding: 10px 20px;
             font-size: 16px;
             background-color: #0077cc;
             color: white;
             border: none;
-            float: right;
             border-radius: 8px;
             cursor: pointer;
         }
@@ -71,58 +87,58 @@
         }
 
         #svg-board {
-            margin-top: 50px;
-            width: 100%;
-            height: 500px;
+            margin-top: 0;
+            width: 100vw;
+            max-width: 900px;
+            height: 600px;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: auto;
         }
 
-        .spieler-name {
-            font-size: 16px;
-            font-weight: bold;
-            text-anchor: middle;
-            alignment-baseline: middle;
-        }
+        @media (max-width: 1100px) {
+            .spielbrett-container {
+                flex-direction: column;
+                align-items: center;
+            }
 
-        .startfeld {
-            fill: green;
-        }
-
-        .aktuelles-feld {
-            fill: red;
+            #svg-board {
+                width: 98vw;
+                max-width: 98vw;
+                height: 60vw;
+                min-height: 350px;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
     <h1>🎲 Spieler: {{ aktueller }}</h1>
-
-    <div class="karte-container" onclick="flipKarte()">
-        <div class="karte" id="karte">
-            <div class="seite rueckseite">
-                <img src="{{ url_for('static', filename='karten/rueckseite.png') }}" alt="Rückseite">
+    <div class="spielbrett-container">
+        <div class="kartenbereich">
+            <div class="karte-container" onclick="flipKarte()">
+                <div class="karte" id="karte">
+                    <div class="seite rueckseite">
+                        <img src="{{ url_for('static', filename='karten/rueckseite.png') }}" alt="Rückseite">
+                    </div>
+                    <div class="seite vorderseite">
+                        <img src="{{ url_for('static', filename='karten/' + gezogene_karte) }}" alt="Gezogene Karte">
+                    </div>
+                </div>
             </div>
-            <div class="seite vorderseite">
-                <img src="{{ url_for('static', filename='karten/' + gezogene_karte) }}" alt="Gezogene Karte">
+            <div class="info">
+                <p>{{ karotten_feld }}</p>
             </div>
+            <form action="{{ url_for('spiel') }}" method="get">
+                <button type="submit" class="naechster-button">🎯 Nächster Spieler</button>
+            </form>
         </div>
+        <div id="svg-board"
+             data-spieler='{{ spieler_json|safe }}'
+             data-aktueller="{{ aktueller }}"></div>
     </div>
-
-    <div class="info">
-        <p>{{ karotten_feld }}</p>
-    </div>
-
-    <form action="{{ url_for('spiel') }}" method="get">
-        <button type="submit" class="naechster-button">🎯 Nächster Spieler</button>
-    </form>
-
-    <h1>Sauf den Shoty</h1>
-    <div id="svg-board"
-         data-spieler='{{ spieler_json|safe }}'
-         data-aktueller="{{ aktueller }}"></div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
     <script>
         function flipKarte() {
             const container = document.querySelector('.karte-container');
