@@ -7,6 +7,17 @@ window.onload = () => {
     const spieler = spielerData ? JSON.parse(spielerData) : [];
     const aktueller = board.getAttribute("data-aktueller");
 
+    // Loch-Felder aus Backend holen (über counter = Positionen, aber wir brauchen die Loch-Info)
+    // Wir holen die Loch-Info aus einem neuen Data-Attribut, das die Felder als Array enthält
+    // (siehe Änderung unten in spiel.html)
+    let felder = [];
+    try {
+        felder = JSON.parse(board.getAttribute("data-felder"));
+    } catch (e) {
+        // fallback: alle Felder keine Löcher
+        felder = Array(31).fill(0);
+    }
+
     // Snake-Board Parameter
     const FELDER = 31; // 0 (Start) bis 30
     const FELDER_PRO_REIHE = 8;
@@ -22,12 +33,8 @@ window.onload = () => {
     const SVG_HEIGHT = PADDING_Y * 2 + ABSTAND_Y * (REIHEN - 1);
 
     // Motive für die Felder (ohne Kappe, mit Alkohol)
-    const MOTIVE = ["🥕", "🌾", "🥬", "🌼", "🍺", "🍻", "🍹", "🍷"]; // Karotte, Stroh, Salat, Löwenzahn, Bier, Bierkrug, Cocktail, Wein
-    // 🐰 = Start, 🏆 = Ziel
-
-    // Dummy Karottenfelder (z.B. alle 4 Felder ab 3, außer Start/Ziel)
-    const karottenFelder = [];
-    for (let i = 3; i < 30; i += 4) karottenFelder.push(i);
+    const MOTIVE = ["🥕", "🌾", "🥬", "🌼", "🍺", "🍻", "🍹", "🍷"];
+    // 🐰 = Start, 🏆 = Ziel, 💣 = Loch
 
     // Symmetrische Snake-Positionen berechnen (wirklich symmetrisch, auch letzte Zeile!)
     function getSnakePos(i) {
@@ -116,6 +123,9 @@ window.onload = () => {
         const {x, y} = getSnakePos(i);
         const spielerHier = spieler.filter(s => s.position === i);
 
+        // Loch-Feld?
+        const istLoch = felder[i] === 1;
+
         // Kreis
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", x);
@@ -132,14 +142,14 @@ window.onload = () => {
             circle.setAttribute("stroke", "#FFD700");
             circle.setAttribute("stroke-width", "7");
             circle.setAttribute("fill", "url(#gold-gradient)");
+        } else if (istLoch) {
+            circle.setAttribute("stroke", "#222");
+            circle.setAttribute("stroke-width", "5");
+            circle.setAttribute("fill", "#222");
         } else if (spielerHier.some(s => s.name === aktueller)) {
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "6");
             circle.setAttribute("fill", "#ffe066");
-        } else if (karottenFelder.includes(i)) {
-            circle.setAttribute("stroke", "#ff8800");
-            circle.setAttribute("stroke-width", "4");
-            circle.setAttribute("fill", "#fff7d6");
         } else {
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "3");
@@ -151,14 +161,14 @@ window.onload = () => {
         let emoji = "";
         if (i === 0) emoji = "🐰";
         else if (i === 30) emoji = "🏆";
-        else if (karottenFelder.includes(i)) emoji = "🥕";
+        else if (istLoch) emoji = "💣";
         else emoji = MOTIVE[(i + 1) % MOTIVE.length];
 
         const emojiText = document.createElementNS("http://www.w3.org/2000/svg", "text");
         emojiText.setAttribute("x", x);
         emojiText.setAttribute("y", y + 8);
         emojiText.setAttribute("text-anchor", "middle");
-        emojiText.setAttribute("font-size", "32");
+        emojiText.setAttribute("font-size", istLoch ? "28" : "32");
         emojiText.setAttribute("font-family", "Segoe UI Emoji, Arial, sans-serif");
         emojiText.textContent = emoji;
         svg.appendChild(emojiText);
@@ -187,7 +197,7 @@ window.onload = () => {
             nameText.setAttribute("text-anchor", "middle");
             nameText.setAttribute("font-size", "15");
             nameText.setAttribute("font-family", "Arial, sans-serif");
-            nameText.setAttribute("fill", "#333");
+            nameText.setAttribute("fill", "#fff");
             nameText.textContent = names;
             svg.appendChild(nameText);
         }

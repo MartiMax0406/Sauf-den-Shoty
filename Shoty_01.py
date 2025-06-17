@@ -67,7 +67,8 @@ def spiel():
                            aktueller=spieler_namen[aktueller_spieler_idx],
                            gezogene_karte=gezogene_karte,
                            zip=zip,
-                           spieler_json=json.dumps([p.to_dict() for p in spieler]))
+                           spieler_json=json.dumps([p.to_dict() for p in spieler]),
+                           felder=felder)  # <-- Felder für das Frontend
 
 
 def check_position(position):

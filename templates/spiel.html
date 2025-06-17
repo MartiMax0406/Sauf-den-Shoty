@@ -140,7 +140,8 @@
         </div>
         <div id="svg-board"
              data-spieler='{{ spieler_json|safe }}'
-             data-aktueller="{{ aktueller }}"></div>
+             data-aktueller="{{ aktueller }}"
+             data-felder='{{ felder|tojson }}'></div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
