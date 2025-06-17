@@ -7,9 +7,7 @@ window.onload = () => {
     const spieler = spielerData ? JSON.parse(spielerData) : [];
     const aktueller = board.getAttribute("data-aktueller");
 
-    // Loch-Felder aus Backend holen (über counter = Positionen, aber wir brauchen die Loch-Info)
-    // Wir holen die Loch-Info aus einem neuen Data-Attribut, das die Felder als Array enthält
-    // (siehe Änderung unten in spiel.html)
+    // Loch-Felder aus Backend holen (Array mit 0=normal, 1=Loch)
     let felder = [];
     try {
         felder = JSON.parse(board.getAttribute("data-felder"));
@@ -18,7 +16,7 @@ window.onload = () => {
         felder = Array(31).fill(0);
     }
 
-    // Snake-Board Parameter
+    // Spielfeld-Parameter
     const FELDER = 31; // 0 (Start) bis 30
     const FELDER_PRO_REIHE = 8;
     const REIHEN = Math.ceil(FELDER / FELDER_PRO_REIHE);
@@ -36,7 +34,7 @@ window.onload = () => {
     const MOTIVE = ["🥕", "🌾", "🥬", "🌼", "🍺", "🍻", "🍹", "🍷"];
     // 🐰 = Start, 🏆 = Ziel, 💣 = Loch
 
-    // Symmetrische Snake-Positionen berechnen (wirklich symmetrisch, auch letzte Zeile!)
+    // Berechnet die (x, y) Position eines Feldes im Snake-Layout
     function getSnakePos(i) {
         const row = Math.floor(i / FELDER_PRO_REIHE);
         let felderInReihe = FELDER_PRO_REIHE;
@@ -63,7 +61,7 @@ window.onload = () => {
     svg.style.margin = "30px auto";
     svg.style.display = "block";
 
-    // Zeilen-Hintergrund für bessere Erkennbarkeit (Abtrennungen immer gleich groß)
+    // Zeilen-Hintergrund für bessere Erkennbarkeit
     for (let row = 0; row < REIHEN; row++) {
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("x", 0);
@@ -75,7 +73,7 @@ window.onload = () => {
         svg.appendChild(rect);
     }
 
-    // Schatten-Filter für Kreise und Gold-Gradient
+    // Schatten-Filter und Gold-Gradient für Kreise
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     defs.innerHTML = `
         <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
@@ -126,7 +124,7 @@ window.onload = () => {
         // Loch-Feld?
         const istLoch = felder[i] === 1;
 
-        // Kreis
+        // Kreis für das Feld
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
@@ -135,29 +133,34 @@ window.onload = () => {
 
         // Feldfarben und Markierungen
         if (i === 0) {
+            // Startfeld
             circle.setAttribute("stroke", "#0077cc");
             circle.setAttribute("stroke-width", "5");
             circle.setAttribute("fill", "#e0f7fa");
         } else if (i === 30) {
+            // Ziel
             circle.setAttribute("stroke", "#FFD700");
             circle.setAttribute("stroke-width", "7");
             circle.setAttribute("fill", "url(#gold-gradient)");
         } else if (istLoch) {
+            // Loch-Feld
             circle.setAttribute("stroke", "#222");
             circle.setAttribute("stroke-width", "5");
             circle.setAttribute("fill", "#222");
         } else if (spielerHier.some(s => s.name === aktueller)) {
+            // Aktueller Spieler
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "6");
             circle.setAttribute("fill", "#ffe066");
         } else {
+            // Normales Feld
             circle.setAttribute("stroke", "#ff8800");
             circle.setAttribute("stroke-width", "3");
             circle.setAttribute("fill", "#fff");
         }
         svg.appendChild(circle);
 
-        // Motiv-Emoji
+        // Emoji/Motiv für das Feld
         let emoji = "";
         if (i === 0) emoji = "🐰";
         else if (i === 30) emoji = "🏆";
@@ -184,7 +187,7 @@ window.onload = () => {
         text.textContent = i === 0 ? "START" : (i === 30 ? "ZIEL" : i);
         svg.appendChild(text);
 
-        // Spielernamen
+        // Spielernamen auf dem Feld anzeigen
         if (spielerHier.length > 0) {
             const names = spielerHier.map(s =>
                 s.name === aktueller
